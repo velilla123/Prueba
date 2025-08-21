@@ -1,0 +1,16 @@
+<div class="site-wrap">
+    <nav class="site-nav">
+        <div class="name">
+            Frontend
+        </div>
+        <ul>
+            <li><a [routerLink]="['./']">Inicio</a></li>
+            <li><a [routerLink]="['./proyectos']">Proyectos</a></li>
+            <li><a (click)="logout()">Cerrar</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <router-outlet></router-outlet>
+    </main>
+</div>

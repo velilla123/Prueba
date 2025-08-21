@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
+@use 'tailwindcss/utilities';
+
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+}
+
+header {
+    padding: 3rem 3rem 0 3rem;
+}
+
+.content-columns {
+    padding: 1.5rem 3rem;
+    display: flex;
+    background: #e5e5e9;
+    box-sizing: border-box;
+    width: 100%;
+
+    >div {
+        height: calc(100vh - 160px);
+        overflow-x: auto;
+        box-sizing: border-box;
+        width: 100%;
+    }
+}

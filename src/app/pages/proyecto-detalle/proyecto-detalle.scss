@@ -1,0 +1,11 @@
+.task-item {
+    transition: all 0.3s ease;
+}
+
+.task-item-rigth:hover {
+  transform: translateX(5px);
+}
+
+.task-item-left:hover {
+  transform: translateX(-5px);
+}

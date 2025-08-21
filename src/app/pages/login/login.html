@@ -1,0 +1,25 @@
+<main class="main-login">
+    <div class="left-login">
+        <img src="https://i.postimg.cc/YC13sX2Z/Astronaut-cuate.png" class="left-login-img" alt="astronaut image">
+    </div>
+
+    <div class="right-login">
+        <div class="card-login">
+            <h1>Acceso</h1>
+            <form (ngSubmit)="onLogin()">
+                <div class="textfield">
+                    <label for="user">User</label>
+                    <input type="text" [(ngModel)]="username" name="username" placeholder="Usuario" required />
+                </div>
+
+                <div class="textfield">
+                    <label for="password">Password</label>
+                    <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required />
+                </div>
+
+                <button type="submit" class="btn-login">Ingresar</button>
+            </form>
+            <p *ngIf="error" class="error">{{ error }}</p>
+        </div>
+    </div>
+</main>
