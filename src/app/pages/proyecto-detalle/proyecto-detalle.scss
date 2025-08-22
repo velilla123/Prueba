@@ -9,3 +9,8 @@
 .task-item-left:hover {
   transform: translateX(-5px);
 }
+
+.ng-invalid.ng-touched {
+    border-color: #ef4444 !important; // Tailwind red-500
+    box-shadow: 0 0 0 1px #ef4444; // Una sombra para un mejor efecto visual
+}

@@ -1,20 +1,26 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule, NgForm, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription, switchMap, catchError, of } from 'rxjs';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 import { ProjectService } from '../../services/project';
 import { AddTaskModal } from '../../shared/add-task-modal/add-task-modal';
 import { ConfirmationModal } from '../../shared/confirmation-modal/confirmation-modal';
-import { FormsModule } from '@angular/forms';
-
-import { Subscription } from 'rxjs';
 import { ModifyAddress } from "../../shared/modify-address/modify-address";
 
 @Component({
   selector: 'app-proyecto-detalle',
   standalone: true,
-  imports: [CommonModule, AddTaskModal, ConfirmationModal, FormsModule, ModifyAddress],
+  imports: [CommonModule, AddTaskModal, ConfirmationModal, FormsModule, ReactiveFormsModule, ModifyAddress, CardModule, ButtonModule, ToastModule, ProgressSpinnerModule],
   templateUrl: './proyecto-detalle.html',
-  styleUrl: './proyecto-detalle.scss'
+  styleUrl: './proyecto-detalle.scss',
+  providers: [MessageService]
 })
 
 export class ProyectoDetalle implements OnInit, OnDestroy {
@@ -26,56 +32,82 @@ export class ProyectoDetalle implements OnInit, OnDestroy {
   selectedTaskToEdit: any | null = null;
   showModifyAddress = false;
   selectedAddressToEdit: any | null = null;
+  isLoading: boolean = true;
 
-  name: string = '';
-  nameUser: string = '';
-  email: string = '';
-  phone: string = '';
-  webSite: string = '';
-  address: string = '';
-
-  companyName: string = '';
-  catchPhrase: string = '';
-  bs: string = '';
+  projectForm!: FormGroup;
 
   private routeSub: Subscription | undefined;
 
-  constructor(private route: ActivatedRoute, private projectService: ProjectService, private cdr: ChangeDetectorRef, private router: Router) { }
+  constructor(private route: ActivatedRoute, private projectService: ProjectService, private cdr: ChangeDetectorRef, private router: Router, private messageService: MessageService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.routeSub = this.route.paramMap.subscribe(params => {
-      const projectId = params.get('id');
-      if (projectId) {
-        console.log('Cargando detalles del proyecto y tareas para ID:', projectId);
-        this.projectService.getProjectById(parseInt(projectId, 10)).subscribe(
-          (projectData) => {
-            this.project = projectData;
-            this.name = projectData.name;
-            this.nameUser = projectData.username;
-            this.email = projectData.email;
-            this.phone = projectData.phone;
-            this.webSite = projectData.website;
-            this.address = projectData.address.street + projectData.address.suite + projectData.address.city + projectData.address.zipcode;
+    this.projectForm = this.fb.group({
+      name: ['', Validators.required],
+      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['',  Validators.required],
+      website: ['',  Validators.required],
+      address: this.fb.group({
+        street: ['', Validators.required],
+        suite: ['',  Validators.required],
+        city: ['', Validators.required],
+        zipcode: ['', Validators.required]
+      }),
+      company: this.fb.group({
+        name: ['', Validators.required],
+        catchPhrase: ['',  Validators.required],
+        bs: ['',  Validators.required]
+      })
+    });
 
-            this.companyName = projectData.company.name;
-            this.catchPhrase = projectData.company.catchPhrase;
-            this.bs = projectData.company.bs;
+    this.routeSub = this.route.paramMap.pipe(
+      switchMap(params => {
+        const projectId = params.get('id');
+        this.isLoading = true;
+        if (projectId) {
+          return this.projectService.getProjectById(parseInt(projectId, 10));
+        } else {
+          this.isLoading = false;
+          this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'ID de proyecto no especificado.', life: 5000 });
+          return of(null);
+        }
+      }),
 
-            this.cdr.detectChanges();
-            this.projectService.getProjectTasks(this.project.id).subscribe({
-              next: (tasksData) => {
-                this.tasks = tasksData;
-                this.cdr.detectChanges();
-              },
-              error: (err) => {
-                console.error('Error al cargar las tareas', err);
-              }
-            });
-          },
-          (error) => {
-            console.error('Error al cargar los detalles del proyecto', error);
-          }
-        );
+      switchMap(projectData => {
+        if (projectData) {
+          this.project = projectData;
+          this.projectForm.patchValue({
+            name: projectData.name,
+            username: projectData.username,
+            email: projectData.email,
+            phone: projectData.phone,
+            website: projectData.website,
+            address: projectData.address,
+            company: projectData.company
+          });
+
+          return this.projectService.getProjectTasks(this.project.id);
+        } else {
+          this.isLoading = false;
+          return of([]);
+        }
+      }),
+      catchError(err => {
+        this.isLoading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Hubo un error al cargar los datos del proyecto.', life: 5000 });
+        return of(null);
+      })
+    ).subscribe({
+      next: (tasksData) => {
+        if (tasksData) {
+          this.tasks = tasksData;
+        }
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Error final en la suscripción: ' + err, life: 3000 });
       }
     });
   }
@@ -88,10 +120,6 @@ export class ProyectoDetalle implements OnInit, OnDestroy {
 
   closePopup(): void {
     this.router.navigate(['/dashboard/proyectos']);
-  }
-
-  saveChanges(): void {
-    console.log("Guardando cambios (funcionalidad no implementada en este demo).");
   }
 
   openAddTaskModal(task: any | null = null): void {
@@ -110,10 +138,16 @@ export class ProyectoDetalle implements OnInit, OnDestroy {
 
   handleTaskSave(taskData: { title: string; completed: boolean }): void {
     if (this.selectedTaskToEdit) {
-      const taskIndex = this.tasks.findIndex(t => t.id === this.selectedTaskToEdit.id);
+      const updatedTask = {
+        ...this.selectedTaskToEdit,
+        title: taskData.title,
+        completed: taskData.completed
+      };
+      this.projectService.updateTaskInLocalStorage(updatedTask);
+
+      const taskIndex = this.tasks.findIndex(t => t.id === updatedTask.id);
       if (taskIndex > -1) {
-        this.tasks[taskIndex].title = taskData.title;
-        this.tasks[taskIndex].completed = taskData.completed;
+        this.tasks[taskIndex] = updatedTask;
       }
     } else {
       const newId = this.tasks.length > 0 ? Math.max(...this.tasks.map(t => t.id)) + 1 : 1;
@@ -123,6 +157,8 @@ export class ProyectoDetalle implements OnInit, OnDestroy {
         title: taskData.title,
         completed: taskData.completed
       };
+      this.projectService.addTaskToLocalStorage(newTask);
+
       this.tasks.push(newTask);
     }
 
@@ -146,6 +182,7 @@ export class ProyectoDetalle implements OnInit, OnDestroy {
   handleConfirmation(isConfirmed: boolean): void {
     this.showConfirmationModal = false;
     if (isConfirmed && this.taskIdToDelete !== null) {
+      this.projectService.deleteTaskFromLocalStorage(this.taskIdToDelete);
       this.tasks = this.tasks.filter(p => p.id !== this.taskIdToDelete);
     }
     this.taskIdToDelete = null;
@@ -162,23 +199,32 @@ export class ProyectoDetalle implements OnInit, OnDestroy {
   }
 
   editAddress(): void {
-    this.openModifyAddress(this.project.address);
+    this.openModifyAddress(this.projectForm.get('address')?.value);
   }
 
-  addAddress(newAddress: { street: string; suite: string; city: string; zipcode: string }): void {
-    if (this.selectedAddressToEdit) {
-      this.project['address'] = {
-        "street": newAddress.street,
-        "suite": newAddress.suite,
-        "city": newAddress.city,
-        "zipcode": newAddress.zipcode,
-      }
-      this.address = newAddress.street + ' ' + newAddress.suite + ' ' + newAddress.city + ' ' + newAddress.zipcode;
-    }
+  handleAddressUpdate(newAddress: { street: string; suite: string; city: string; zipcode: string }): void {
+    this.projectForm.get('address')?.patchValue(newAddress);
     this.closeModifyAddress();
   }
 
   saveProject(): void {
+    if (this.projectForm.invalid) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor, complete todos los campos requeridos correctamente.', life: 5000 });
+      return;
+    }
 
+    const updatedProject = {
+      ...this.project,
+      ...this.projectForm.value
+    };
+
+    this.projectService.updateProject(this.project.id, updatedProject).subscribe({
+      next: (response) => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Proyecto guardado con éxito', life: 3000 });
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Hubo un error al guardar el proyecto: ' + err, life: 3000 });
+      }
+    });
   }
 }

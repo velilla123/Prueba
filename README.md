@@ -1,59 +1,49 @@
-# FrontendApp
+# Angular Frontend App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
+This is a single-page application built with Angular, featuring a task and project management interface. It demonstrates best practices in modern web development, including modular architecture, reactive forms, and API consumption.
 
-## Development server
+## Getting Started
 
-To start a local development server, run:
+Follow these steps to set up and run the project locally.
 
-```bash
-ng serve
-```
+### Prerequisites
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Node.js 20** (recommended to use [nvm](https://github.com/nvm-sh/nvm) for version management)  
+- **npm** (comes with Node.js)  
 
-## Code scaffolding
+> Check your versions with:
+> ```bash
+> node -v   # should be v20.x
+> npm -v
+> ```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 1. Installation
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Clone the repository and navigate into the project folder.  
+Then install all dependencies with:
 
 ```bash
-ng build
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+> ⚡ Run this command inside the project root (where `package.json` is located).
 
-## Running unit tests
+### 2. Run the Development Server
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+To start the Angular development server:
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+Then open [http://localhost:4200](http://localhost:4200) in your browser.
 
-For end-to-end (e2e) testing, run:
+### 3. Build for Production
+
+To generate a production build:
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+The compiled files will be located in the `dist/` folder.

@@ -1,16 +1,12 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
-        <h2 class="text-xl font-bold mb-4 text-gray-800">Confirmación</h2>
-        <p class="text-gray-700 mb-6">{{ message }}</p>
-        <div class="flex justify-end space-x-4">
-            <button (click)="onCancel()"
-                class="bg-gray-200 text-gray-800 py-2 px-4 rounded-md font-semibold hover:bg-gray-300 focus:outline-0 focus:outline-offset-2 focus:outline-gray-500 active:bg-gray-400">
-                No
-            </button>
-            <button (click)="onConfirm()"
-                class="bg-red-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-red-700 focus:outline-0 focus:outline-offset-2 focus:outline-red-500 active:bg-red-800">
-                Sí
-            </button>
-        </div>
+<p-dialog header="Confirmación" [(visible)]="isVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false" (onHide)="onCancel()">
+
+    <span class="p-text-secondary block mb-8">{{ message }}</span>
+
+    <div class="flex justify-end mt-4">
+        <button pButton type="button" label="No" icon="pi pi-times" class="p-button-text p-mr-2"
+            (click)="onCancel()" severity="danger"></button>
+        <button pButton type="button" label="Si" icon="pi pi-check" (click)="onConfirm()"></button>
     </div>
-</div>
+
+</p-dialog>

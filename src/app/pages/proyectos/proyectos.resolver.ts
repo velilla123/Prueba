@@ -13,7 +13,6 @@ export class ProyectosResolver implements Resolve<any[]> {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<any[]> {
-    console.log('Resolviendo datos de proyectos...');
     return this.projectService.getProjects();
   }
 }

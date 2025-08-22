@@ -1,49 +1,62 @@
-import { Component, OnInit, OnChanges, EventEmitter, Output, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-add-task-modal',
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    CheckboxModule
+  ],
   templateUrl: './add-task-modal.html',
   styleUrl: './add-task-modal.scss'
 })
-export class AddTaskModal implements OnInit, OnChanges {
+export class AddTaskModal implements OnInit {
   @Input() taskToEdit: any | null = null;
+  @Input() isVisible: boolean = false;
+  @Output() isVisibleChange = new EventEmitter<boolean>();
 
   @Output() taskAdded = new EventEmitter<{ title: string; completed: boolean }>();
   @Output() modalClosed = new EventEmitter<void>();
 
-  taskTitle: string = '';
-  isCompleted: boolean = false;
+  taskForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.taskForm = this.fb.group({
+      title: ['', [Validators.required]],
+      completed: [false]
+    });
+  }
 
   ngOnInit(): void {
-    this.loadTaskData();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['taskToEdit']) {
-      this.loadTaskData();
-    }
-  }
-
-  private loadTaskData(): void {
     if (this.taskToEdit) {
-      this.taskTitle = this.taskToEdit.title;
-      this.isCompleted = this.taskToEdit.completed;
-    } else {
-      this.taskTitle = '';
-      this.isCompleted = false;
+      this.taskForm.patchValue({
+        title: this.taskToEdit.title,
+        completed: this.taskToEdit.completed
+      });
     }
   }
 
   saveTask(): void {
-    if (this.taskTitle.trim()) {
-      this.taskAdded.emit({ title: this.taskTitle, completed: this.isCompleted });
+    if (this.taskForm.valid) {
+      const { title, completed } = this.taskForm.value;
+      this.taskAdded.emit({ title, completed });
+      this.closeModal();
+    } else {
+      this.taskForm.markAllAsTouched();
     }
   }
 
-  cancel(): void {
-    this.modalClosed.emit();
+  closeModal(): void {
+    this.isVisibleChange.emit(false);
   }
 }

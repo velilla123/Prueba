@@ -1,0 +1,188 @@
+<p-dialog header="Crear proyecto" [(visible)]="isVisible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false"
+    [resizable]="false" (onHide)="closeModal()">
+    <form [formGroup]="projectForm" (ngSubmit)="saveProject()">
+        <div class="p-fluid">
+            <div class="flex space-x-1">
+                <div class="field flex flex-wrap">
+                    <label for="name" class="font-bold w-full">Nombre:</label>
+                    <div class="w-full">
+                        <input pInputText id="name" type="text" formControlName="name" class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('name')?.invalid && projectForm.get('name')?.touched}"
+                            required>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched">El
+                            nombre es obligatorio.</small>
+                    </div>
+                </div>
+
+                <div class="field flex flex-wrap">
+                    <label for="username" class="font-bold w-full">Nombre usuario:</label>
+                    <div class="w-full">
+                        <input pInputText id="username" type="text" formControlName="username" class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('username')?.invalid && projectForm.get('username')?.touched}"
+                            required>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('username')?.invalid && projectForm.get('username')?.touched">El
+                            Nombre usuario es obligatorio.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex space-x-1">
+                <div class="field flex flex-wrap">
+                    <label for="phone" class="font-bold w-full">Teléfono:</label>
+                    <div class="w-full">
+                        <input pInputText id="phone" type="text" formControlName="phone" class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('phone')?.invalid && projectForm.get('phone')?.touched}"
+                            required>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('phone')?.invalid && projectForm.get('phone')?.touched">El
+                            Teléfono es obligatorio.</small>
+                    </div>
+                </div>
+
+                <div class="field flex flex-wrap">
+                    <label for="website" class="font-bold w-full">Sitio Web:</label>
+                    <div class="w-full">
+                        <input pInputText id="website" type="text" formControlName="website" class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('website')?.invalid && projectForm.get('website')?.touched}"
+                            required>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('website')?.invalid && projectForm.get('website')?.touched">El
+                            Sitio Web es obligatorio.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex w-full">
+                <div class="field flex flex-wrap w-full">
+                    <label for="email" class="font-bold w-full">Email:</label>
+                    <div class="w-full">
+                        <input pInputText id="email" type="text" formControlName="email" class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('email')?.invalid && projectForm.get('email')?.touched}"
+                            required>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('email')?.invalid && projectForm.get('email')?.touched">El
+                            Email es obligatorio.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div formGroupName="address" class="flex flex-col w-full my-2">
+                <h2 class="font-bold w-full border-b text-center mb-2">Dirección</h2>
+
+                <div class="flex space-x-1">
+                    <div class="mb-1">
+                        <label for="street" class="block text-gray-700 font-medium mb-2">Calle</label>
+                        <input pInputText type="text" id="street" formControlName="street"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('address')?.get('street')?.invalid && projectForm.get('address')?.get('street')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('street')?.hasError('required') && projectForm.get('address')?.get('street')?.touched">
+                            La calle es obligatoria.
+                        </small>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('street')?.hasError('maxlength')">
+                            La calle no puede exceder los 100 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="suite" class="block text-gray-700 font-medium mb-2">Apartamento</label>
+                        <input pInputText type="text" id="suite" formControlName="suite"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('address')?.get('suite')?.invalid && projectForm.get('address')?.get('suite')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('suite')?.hasError('required') && projectForm.get('address')?.get('suite')?.touched">
+                            El apartamento es obligatorio.
+                        </small>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('suite')?.hasError('maxlength')">
+                            El apartamento no puede exceder los 50 caracteres.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="flex space-x-1">
+                    <div class="mb-1">
+                        <label for="city" class="block text-gray-700 font-medium mb-2">Ciudad</label>
+                        <input pInputText type="text" id="city" formControlName="city"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('address')?.get('city')?.invalid && projectForm.get('address')?.get('city')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('city')?.hasError('required') && projectForm.get('address')?.get('city')?.touched">
+                            La ciudad es obligatoria.
+                        </small>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('city')?.hasError('maxlength')">
+                            La ciudad no puede exceder los 50 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="zipcode" class="block text-gray-700 font-medium mb-2">Código postal</label>
+                        <input pInputText type="text" id="zipcode" formControlName="zipcode"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('address')?.get('zipcode')?.invalid && projectForm.get('address')?.get('zipcode')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('zipcode')?.hasError('required') && projectForm.get('address')?.get('zipcode')?.touched">
+                            El código postal es obligatorio.
+                        </small>
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('address')?.get('zipcode')?.hasError('pattern')">
+                            El formato del código postal no es válido.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div formGroupName="company" class="flex flex-col w-full my-2">
+                <h2 class="font-bold w-full border-b text-center mb-2">Compañía</h2>
+
+                <div class="flex space-x-1">
+                    <div class="mb-1">
+                        <label for="nameCompany" class="block text-gray-700 font-medium mb-2">Nombre de compañía</label>
+                        <input pInputText type="text" id="nameCompany" formControlName="nameCompany"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('company')?.get('nameCompany')?.invalid && projectForm.get('company')?.get('nameCompany')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('company')?.get('nameCompany')?.hasError('required') && projectForm.get('company')?.get('nameCompany')?.touched">
+                            Nombre de compañía es obligatoria.
+                        </small>
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="bs" class="block text-gray-700 font-medium mb-2">BS</label>
+                        <input pInputText type="text" id="bs" formControlName="bs"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('company')?.get('bs')?.invalid && projectForm.get('company')?.get('bs')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('company')?.get('bs')?.hasError('required') && projectForm.get('company')?.get('bs')?.touched">
+                            bs es obligatoria.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="flex w-full">
+                    <div class="mb-1 w-full">
+                        <label for="catchPhrase" class="block text-gray-700 font-medium mb-2">Eslogan</label>
+                        <input pInputText type="text" id="catchPhrase" formControlName="catchPhrase"
+                            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500"
+                            [ngClass]="{'ng-invalid ng-dirty': projectForm.get('company')?.get('catchPhrase')?.invalid && projectForm.get('company')?.get('catchPhrase')?.touched}" />
+                        <small class="p-error block text-red-500"
+                            *ngIf="projectForm.get('company')?.get('catchPhrase')?.hasError('required') && projectForm.get('company')?.get('catchPhrase')?.touched">
+                            Eslogan de compañía es obligatoria.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="flex justify-end mt-4">
+            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text p-mr-2"
+                (click)="closeModal()" severity="danger"></button>
+            <button pButton type="submit" label="Guardar" icon="pi pi-check" [disabled]="projectForm.invalid"></button>
+        </div>
+    </form>
+</p-dialog>
