@@ -33,17 +33,17 @@ npm install
 To start the Angular development server:
 
 ```bash
-npm start
+ng serve
 ```
 
 Then open [http://localhost:4200](http://localhost:4200) in your browser.
 
-### 3. Build for Production
+### 3. Code scaffolding
 
-To generate a production build:
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
 ```bash
-npm run build
+ng generate component component-name
 ```
 
 The compiled files will be located in the `dist/` folder.
